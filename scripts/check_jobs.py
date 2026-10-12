@@ -24,7 +24,12 @@ def wanted(j):
 def fmt(j):
     ts = int(j.get("date_posted", 0))
     fallback = datetime.fromtimestamp(ts, timezone.utc).strftime("%b %d, %Y")
+    locs = j.get("locations") or []
+    loc = "; ".join(locs[:3]) or "Location not listed"
+    if len(locs) > 3:
+        loc += f" (+{len(locs) - 3} more)"
     return (f"*{j['company_name']}*, {j['title']}\n"
+            f"{loc}\n"
             f"Posted <!date^{ts}^{{date_short_pretty}}|{fallback}>\n"
             f"<{j['url']}|Apply>")
 
