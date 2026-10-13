@@ -9,6 +9,7 @@ WEBHOOK = os.environ["SLACK_WEBHOOK_URL"]
 # Optional filters (leave empty to allow everything)
 CATEGORIES = set()            # e.g. {"Software", "Quant"}
 TERM_CONTAINS = ""            # e.g. "Summer 2027"
+MAX_AGE_DAYS = 1              # only announce listings posted within this many days
 
 
 def wanted(j):
@@ -17,6 +18,9 @@ def wanted(j):
     if CATEGORIES and j.get("category") not in CATEGORIES:
         return False
     if TERM_CONTAINS and not any(TERM_CONTAINS in t for t in j.get("terms", [])):
+        return False
+    age = time.time() - int(j.get("date_posted", 0))
+    if age > MAX_AGE_DAYS * 86400:
         return False
     return True
 
